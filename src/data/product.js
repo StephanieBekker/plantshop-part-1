@@ -82,6 +82,8 @@ const products = [
         image: yuccaImage,
     },
     {
+        useLocalImage: true,
+        perenualId: 2531,
         id: 12,
         name: "Dragon Tree",
         price: 219,
