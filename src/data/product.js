@@ -21,6 +21,7 @@ const products = [
         image: pileaImage,
     },
     {
+        perenualId: 5257,
         id: 2,
         name: "Monstera",
         price: 149,
