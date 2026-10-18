@@ -19,16 +19,18 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
-.site-header {
+.navbar {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: start;
   margin-bottom: 34px;
   padding: 10px 0 24px;
   border-bottom: 1px solid #ced8cf;
 }
 
-.site-header h1 {
+.navbar h1 {
   margin: 0;
   color: #294b3d;
   font-size: clamp(2.4rem, 6vw, 4.6rem);

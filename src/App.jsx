@@ -1,29 +1,22 @@
-import products from "./data/product.js";
-import Header from "./components/Header.jsx";
-import ProductCard from "./components/ProductCard.jsx";
-import Cart from "./components/Cart.jsx";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout.jsx";
+import Home from "./pages/Home.jsx";
+import Shop from "./pages/Shop.jsx";
+import Checkout from "./pages/Checkout.jsx";
+import Cart from "./pages/Cart.jsx";
 import "./App.css";
 
 function App() {
   return (
     <>
-      <Header />
-      <main className="shop-layout">
-        <section className="products" aria-labelledby="products-heading">
-          <h2 id="products-heading" className="products-heading">
-            Products
-          </h2>
-
-          <div className="product-grid">
-            {/* map opretter et ProductCard for hvert produkt i produktlisten */}
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-
-        <Cart />
-      </main>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="cart" element={<Cart />} />
+        </Route>
+      </Routes>
     </>
   );
 }
