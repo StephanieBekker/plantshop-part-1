@@ -3,8 +3,7 @@ import { useDispatch } from "react-redux";
 // addToCart er en action creator: den laver beskeden til Redux
 import { addToCart } from "../features/cart/cartSlice";
 
-
-// product er en prop: data, som App.jsx sender til dette produktkort
+// product er en prop: produktdata, som Shop sender til dette produktkort
 export default function ProductCard({ product }) {
   // dispatch sender en action, når brugeren klikker på knappen
   const dispatch = useDispatch();
