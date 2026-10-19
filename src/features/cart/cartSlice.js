@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 // initialState beskriver, hvordan kurven ser ud i Redux fra starten
 const initialState = {
     items: [],
+    orderPlaced: false,
 }
 
 // createSlice samler kurvens startdata og reducers ét sted
@@ -12,6 +13,7 @@ const cartSlice = createSlice({
     reducers: {
         // En reducer bestemmer, hvordan state ændres, når en action kommer
         addToCart: (state, action) => {
+            state.orderPlaced = false;
 
             // action.payload er produktet, som brugeren valgte
             const newItem = action.payload;
@@ -65,6 +67,12 @@ const cartSlice = createSlice({
         clearCart: (state) => {
             // Tømmer listen med produkter
             state.items = [];
+            state.orderPlaced = false;
+        },
+
+        completeOrder: (state) => {
+            state.items = [];
+            state.orderPlaced = true;
         },
 
         // Reducer der ændrer quantity til det antal brugeren skriver
@@ -95,6 +103,8 @@ const cartSlice = createSlice({
 export const { addToCart } = cartSlice.actions;
 // Eksporterer removeOne, så komponenter kan sende actionen med dispatch
 export const { removeOne } = cartSlice.actions;
+// Eksporterer completeOrder, så komponenter kan sende actionen med dispatch
+export const { completeOrder } = cartSlice.actions;
 // Eksporterer addOne, så komponenter kan sende actionen med dispatch
 export const { addOne } = cartSlice.actions;
 // Eksporterer clearCart, så komponenter kan sende actionen med dispatch

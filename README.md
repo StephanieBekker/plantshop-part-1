@@ -15,9 +15,9 @@ https://plantshop-part-1.vercel.app/
 
 ## Plant data
 
-The catalogue contains 13 plants with local prices and images.
-Trefle currently supplies the scientific name for Monstera deliciosa,
-matched using Trefle ID 62427. The other products remain local.
+The catalogue is built from 13 selected plants fetched from Trefle.
+Scientific names come from the API. Local product data supplies
+prices, images and stable cart IDs, matched using trefleId.
 
 React fetches `/api/plants`. This Vercel server function calls Trefle
 using a private server-side token. The token is not returned to React.
@@ -42,13 +42,13 @@ for Development, Preview and Production. Never commit or share its value.
 Start the application and server function:
 
 ```bash
-npx vercel dev
+npm run dev
 ```
 
 Log in and link the appropriate Vercel project when prompted.
 Open the local URL printed in the terminal.
 
-`npm run dev` starts Vite alone and does not run the Vercel API function.
+Use Node.js 22 LTS. npm run dev starts both Vite and the local API function through Vercel CLI.
 
 ## Checks and build
 
@@ -79,3 +79,9 @@ Cart contents and profit reset when the page reloads.
 
 The Vercel server function is an additional implementation choice
 to keep the Trefle access token private.
+
+## Automated checks
+
+GitHub Actions runs lint and build on pushes and pull requests to main.
+Vercel deploys main through its Git integration.
+The checks do not currently gate the Vercel deployment.

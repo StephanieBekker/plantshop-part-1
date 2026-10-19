@@ -10,7 +10,7 @@ export async function GET() {
 
     try {
         const response = await fetch(
-            `https://trefle.io/api/v1/plants/search?token=${token}&q=monstera`
+            `https://trefle.io/api/v1/species?token=${token}&filter[scientific_name]=Pilea%20peperomioides,Monstera%20deliciosa,Ficus%20microcarpa,Pachira%20glabra,Beaucarnea%20recurvata,Dracaena%20trifasciata,Peperomia%20obtusifolia,Chamaedorea%20elegans,Strelitzia%20nicolai,Scindapsus%20pictus,Yucca%20gigantea,Dracaena%20reflexa%20var.%20angustifolia,Aglaonema%20commutatum`
         );
 
         if (!response.ok) {

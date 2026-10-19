@@ -15,17 +15,21 @@ function Shop() {
       const data = await response.json();
       const apiProducts = data.data;
       setShopProducts(
-        products.map((product) => {
-          const apiProduct = apiProducts.find(
-            (plant) => plant.id === product.trefleId,
+        apiProducts.map((apiProduct) => {
+          const product = products.find(
+            (product) => product.trefleId === apiProduct.id,
           );
-          if (apiProduct) {
-            return {
-              ...product,
-              name: apiProduct.scientific_name || product.name,
-            };
+
+          if (!product) {
+            throw new Error(
+              `Missing local product data for ID ${apiProduct.id}`,
+            );
           }
-          return product;
+
+          return {
+            ...product,
+            name: apiProduct.scientific_name || product.name,
+          };
         }),
       );
     }
@@ -36,23 +40,46 @@ function Shop() {
 
   return (
     <div>
-      <h1>Shop</h1>
-      {loading && <p role="status">Loading products...</p>}
+      <h1 id="shop-heading">Our plants</h1>
+
+      {loading && (
+        <p className="sr-only" role="status">
+          Loading plants...
+        </p>
+      )}
+
       {error && <p role="alert">{error}</p>}
-      <section className="products" aria-labelledby="products-heading">
-        <h2 id="products-heading" className="products-heading">
-          Products
-        </h2>
+
+      <section
+        className="products"
+        aria-labelledby="shop-heading"
+        aria-busy={loading}
+      >
+        <div className="product-grid">
+          {loading
+            ? [1, 2, 3, 4, 5, 6].map((placeholder) => (
+                <div
+                  className="product-card skeleton-card"
+                  key={placeholder}
+                  aria-hidden="true"
+                >
+                  <div className="skeleton-image" />
+                  <div className="skeleton-line" />
+                  <div className="skeleton-line skeleton-short" />
+                  <div className="skeleton-button" />
+                </div>
+              ))
+            : shopProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+        </div>
+      </section>
+
+      <footer className="site-footer">
         <p>
           Data: <a href="https://trefle.io/">Trefle.io</a> (CC BY 4.0)
         </p>
-        <div className="product-grid">
-          {/* map opretter et ProductCard for hvert produkt i produktlisten */}
-          {shopProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
+      </footer>
     </div>
   );
 }
