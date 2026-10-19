@@ -1,6 +1,6 @@
 # SPIRE – Plant Shop Part 1
 
-A responsive plant shop built with React, Redux Toolkit and React Router.
+A responsive school project built with React, Redux Toolkit and React Router.
 
 ## Live demo
 
@@ -8,80 +8,74 @@ https://plantshop-part-1.vercel.app/
 
 ## Features
 
-- Home, Shop, Cart and Checkout pages with shared navigation.
-- Redux profit demo: selling a plant adds 5 kr, and buying a plant subtracts 2 kr.
-- Add products to the cart. Adding the same product increases its quantity.
-- Change quantities, remove individual products or clear the cart.
-- View an order summary with quantities and the total price.
-- Place a demo order to clear the cart and return to Home.
-- Responsive layouts and keyboard-accessible controls.
+- Home, Shop, Cart and Checkout with shared navigation.
+- Redux profit demo: selling adds 5 kr; buying subtracts 2 kr.
+- Add products, change quantities, remove products and clear the cart.
+- Review an order and place a demo order to clear the cart and return Home.
 
 ## Plant data
 
-The shop uses a local catalogue of 13 plants with local prices and images.
+The catalogue contains 13 plants with local prices and images.
+Trefle currently supplies the scientific name for Monstera deliciosa,
+matched using Trefle ID 62427. The other products remain local.
 
-Perenual API data updates the names of two matched plants: Monstera and
-Dragon Tree. API images are used when available unless a local image
-override is selected.
+React fetches `/api/plants`. This Vercel server function calls Trefle
+using a private server-side token. The token is not returned to React.
 
-Local products remain available if the API request fails. The page displays
-loading and error messages.
+Local products remain available if the request fails.
+Loading and error messages are displayed.
+
+Data: [Trefle.io](https://trefle.io/) (CC BY 4.0).
 
 ## Run locally
 
-1. Install dependencies:
+Install dependencies:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
-2. Create `.env.local` in the project root:
+Create a free Trefle account and obtain an access token.
+In your Vercel project, add `TREFLE_API_TOKEN` as an environment variable
+for Development, Preview and Production. Never commit or share its value.
 
-   ```env
-   VITE_PERENUAL_API_KEY=your_perenual_api_key
-   ```
+Start the application and server function:
 
-   Replace the placeholder with your own Perenual API key.
-   Do not commit this file. Variables prefixed with `VITE_` are exposed
-   in the browser; this setup does not keep the API key secret.
+```bash
+npx vercel dev
+```
 
-3. Start the development server:
+Log in and link the appropriate Vercel project when prompted.
+Open the local URL printed in the terminal.
 
-   ```bash
-   npm run dev
-   ```
+`npm run dev` starts Vite alone and does not run the Vercel API function.
 
-4. Open http://localhost:3000.
-
-## Checks and production build
+## Checks and build
 
 ```bash
 npm run lint
 npm run build
 ```
 
-The production build is generated in `docs/`.
+The production output directory is `docs/`.
 
 ## Deployment
 
-The project is deployed on Vercel using the `main` branch.
+The project uses Vercel's Git integration with the `main` branch.
 The output directory is `docs`.
+Environment variable changes require a new deployment.
 
-Set `VITE_PERENUAL_API_KEY` in the Vercel environment variables before
-deploying. Environment variable changes require a new deployment.
+## Structure
 
-## Project structure
-
-- `src/pages`: page components.
-- `src/components`: UI components.
-- `src/features`: Redux slices for cart and profit.
-- `src/app`: Redux store.
-- `src/data`: local product catalogue.
-- `src/assets`: local plant images.
+- `api`: Vercel server function.
+- `src/pages` and `src/components`: pages and UI components.
+- `src/features` and `src/app`: Redux slices and store.
+- `src/data` and `src/assets`: local catalogue and images.
 
 ## Scope
 
-This is a school project. Checkout demonstrates completing an order;
-it does not process payments or store orders on a server.
+Checkout is a demonstration without real payment or permanent order storage.
+Cart contents and profit reset when the page reloads.
 
-Cart contents and profit are held in memory and reset when the page reloads.
+The Vercel server function is an additional implementation choice
+to keep the Trefle access token private.

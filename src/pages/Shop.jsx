@@ -8,36 +8,21 @@ function Shop() {
   const [error, setError] = useState("");
   useEffect(() => {
     async function fetchProducts() {
-      const apiKey = import.meta.env.VITE_PERENUAL_API_KEY;
-      const searchTerms = ["monstera", "dracaena"];
-      const apiProducts = [];
-
-      for (const searchTerm of searchTerms) {
-        const response = await fetch(
-          `https://perenual.com/api/v2/species-list?key=${apiKey}&q=${searchTerm}`,
-        );
-        if (!response.ok) {
-          throw new Error(`Failed to fetch products (HTTP ${response.status})`);
-        }
-        const data = await response.json();
-        apiProducts.push(...data.data);
+      const response = await fetch("/api/plants");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch products (HTTP ${response.status})`);
       }
+      const data = await response.json();
+      const apiProducts = data.data;
       setShopProducts(
         products.map((product) => {
           const apiProduct = apiProducts.find(
-            (plant) => plant.id === product.perenualId,
+            (plant) => plant.id === product.trefleId,
           );
           if (apiProduct) {
-            const apiImage = apiProduct.default_image?.medium_url;
             return {
               ...product,
-              name: apiProduct.common_name,
-              image:
-                !product.useLocalImage &&
-                apiImage &&
-                !apiImage.includes("upgrade_access")
-                  ? apiImage
-                  : product.image,
+              name: apiProduct.scientific_name || product.name,
             };
           }
           return product;
@@ -58,7 +43,9 @@ function Shop() {
         <h2 id="products-heading" className="products-heading">
           Products
         </h2>
-
+        <p>
+          Data: <a href="https://trefle.io/">Trefle.io</a> (CC BY 4.0)
+        </p>
         <div className="product-grid">
           {/* map opretter et ProductCard for hvert produkt i produktlisten */}
           {shopProducts.map((product) => (

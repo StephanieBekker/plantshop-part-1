@@ -21,7 +21,7 @@ const products = [
         image: pileaImage,
     },
     {
-        perenualId: 5257,
+        trefleId: 62427,
         id: 2,
         name: "Monstera",
         price: 149,
@@ -82,8 +82,6 @@ const products = [
         image: yuccaImage,
     },
     {
-        useLocalImage: true,
-        perenualId: 2531,
         id: 12,
         name: "Dragon Tree",
         price: 219,
