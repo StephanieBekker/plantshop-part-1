@@ -1,119 +1,94 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// initialState beskriver, hvordan kurven ser ud i Redux fra starten
+// The cart is shared between pages and resets when the browser reloads.
 const initialState = {
-    items: [],
-    orderPlaced: false,
-}
+  items: [],
+  orderPlaced: false,
+};
 
-// createSlice samler kurvens startdata og reducers ét sted
+// Redux Toolkit uses Immer, allowing reducers to describe updates with mutation syntax.
 const cartSlice = createSlice({
-    name: 'cart',
-    initialState,
-    reducers: {
-        // En reducer bestemmer, hvordan state ændres, når en action kommer
-        addToCart: (state, action) => {
-            state.orderPlaced = false;
+  name: "cart",
+  initialState,
+  reducers: {
+    addToCart: (state, action) => {
+      const newItem = action.payload;
+      const quantity = newItem.quantity ?? 1;
+      if (!Number.isInteger(quantity) || quantity < 1) return;
 
-            // action.payload er produktet, som brugeren valgte
-            const newItem = action.payload;
-            const existingItem = state.items.find(
-                (item) => item.id === newItem.id
-            );
-            //Produktet findes allerede, øger antal
-            if (existingItem) {
-                existingItem.quantity++;
+      state.orderPlaced = false;
+      const existingItem = state.items.find((item) => item.id === newItem.id);
 
-            } else {
-                //Produktet findes ikke, tilføjer det med antal 1
-                state.items.push({
-                    image: action.payload.image,
-                    name: action.payload.name,
-                    price: action.payload.price,
-
-                    id: action.payload.id,
-                    quantity: 1,
-                });
-            }
-        },
-        // Reducer der sænker quantity eller fjerner produktet fra kurven
-        removeOne: (state, action) => {
-            // action.payload indeholder id på produktet, der skal ændres
-            const id = action.payload;
-            // find søger efter produktet med samme id i state
-            const existingItem = state.items.find((item) => item.id === id);
-            if (existingItem) {
-                // Hvis produktet findes, sænkes quantity med 1
-                existingItem.quantity--;
-                // Hvis quantity er 0, fjernes produktet fra kurven
-                if (existingItem.quantity === 0) {
-                    state.items = state.items.filter((item) => item.id !== id);
-                }
-            }
-        },
-        // Reducer der øger quantity med 1
-        addOne: (state, action) => {
-            // action.payload indeholder id på produktet, der skal ændres
-            const id = action.payload;
-            // find søger efter produktet med samme id i state
-            const existingItem = state.items.find((item) => item.id === id);
-
-            if (existingItem) {
-                // Hvis produktet findes, øges quantity med 1
-                existingItem.quantity++;
-            }
-        },
-        // Reducer der tømmer kurven
-        clearCart: (state) => {
-            // Tømmer listen med produkter
-            state.items = [];
-            state.orderPlaced = false;
-        },
-
-        completeOrder: (state) => {
-            state.items = [];
-            state.orderPlaced = true;
-        },
-
-        // Reducer der ændrer quantity til det antal brugeren skriver
-        setQuantity: (state, action) => {
-            // Henter id og quantity fra action.payload
-            const { id, quantity } = action.payload;
-
-            // find søger efter produktet med samme id i state
-            const existingItem = state.items.find((item) => item.id === id);
-            if (existingItem && quantity >= 1) {
-                // Opdaterer quantity med det antal brugeren skriver
-                existingItem.quantity = quantity;
-            }
-        },
-        // Reducer der fjerner alle eksemplarer af produktet
-        removeItem: (state, action) => {
-            // action.payload indeholder id på produktet, der skal fjernes
-            const id = action.payload;
-            // filter fjerner produktet med samme id fra state
-            state.items = state.items.filter((item) => item.id !== id);
-        }
-
-
+      // Cards add one item; product details can add a chosen quantity.
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        state.items.push({
+          id: newItem.id,
+          name: newItem.name,
+          image: newItem.image,
+          price: newItem.price,
+          quantity,
+        });
+      }
     },
+
+    removeOne: (state, action) => {
+      const existingItem = state.items.find((item) => item.id === action.payload);
+      if (!existingItem) return;
+
+      existingItem.quantity -= 1;
+      // Removing the final unit also removes the product row.
+      if (existingItem.quantity === 0) {
+        state.items = state.items.filter((item) => item.id !== action.payload);
+      }
+    },
+
+    addOne: (state, action) => {
+      const existingItem = state.items.find((item) => item.id === action.payload);
+      if (existingItem) existingItem.quantity += 1;
+    },
+
+    setQuantity: (state, action) => {
+      const { id, quantity } = action.payload;
+      const existingItem = state.items.find((item) => item.id === id);
+      // Validate here as well as in the input so state keeps whole quantities.
+      if (existingItem && Number.isInteger(quantity) && quantity >= 1) {
+        existingItem.quantity = quantity;
+      }
+    },
+
+    removeItem: (state, action) => {
+      state.items = state.items.filter((item) => item.id !== action.payload);
+    },
+
+    clearCart: (state) => {
+      state.items = [];
+      state.orderPlaced = false;
+    },
+
+    dismissOrderConfirmation: (state) => {
+      state.orderPlaced = false;
+    },
+
+    completeOrder: (state) => {
+      // Demo checkout clears the cart and enables the Home confirmation.
+      state.items = [];
+      state.orderPlaced = true;
+    },
+  },
 });
 
-// Eksporterer addToCart, så komponenter kan sende actionen med dispatch
-export const { addToCart } = cartSlice.actions;
-// Eksporterer removeOne, så komponenter kan sende actionen med dispatch
-export const { removeOne } = cartSlice.actions;
-// Eksporterer completeOrder, så komponenter kan sende actionen med dispatch
-export const { completeOrder } = cartSlice.actions;
-// Eksporterer addOne, så komponenter kan sende actionen med dispatch
-export const { addOne } = cartSlice.actions;
-// Eksporterer clearCart, så komponenter kan sende actionen med dispatch
-export const { clearCart } = cartSlice.actions;
-// Eksporterer setQuantity, så komponenter kan sende actionen med dispatch
-export const { setQuantity } = cartSlice.actions;
-// Eksporterer removeItem, så komponenter kan sende actionen med dispatch
-export const { removeItem } = cartSlice.actions;
+// Action creators are imported by the components; the reducer goes in store.js.
+export const {
+  addToCart,
+  removeOne,
+  addOne,
+  setQuantity,
+  removeItem,
+  clearCart,
+  completeOrder,
+  dismissOrderConfirmation,
+} = cartSlice.actions;
 
-// Eksporterer reduceren, så store.js kan bruge logikken i Redux
 export default cartSlice.reducer;
-

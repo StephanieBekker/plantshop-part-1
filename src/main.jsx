@@ -1,3 +1,4 @@
+import { loadCatalogue } from "./features/catalogue/catalogueRequests.js";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -6,9 +7,12 @@ import { Provider } from "react-redux";
 import { store } from "./app/store.js";
 import { BrowserRouter } from "react-router-dom";
 
+// Start the shared catalogue once, independently of route mounts.
+loadCatalogue();
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* Provider gør Redux store tilgængelig for komponenterne i App */}
+    {/* Provider makes the shared Redux store available to every page. */}
     <Provider store={store}>
       <BrowserRouter>
         <App />

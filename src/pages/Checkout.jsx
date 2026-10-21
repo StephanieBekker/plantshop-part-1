@@ -1,7 +1,6 @@
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { completeOrder } from "../features/cart/cartSlice";
+import { completeOrder } from "../features/cart/cartSlice.js";
 
 function Checkout() {
   const items = useSelector((state) => state.cart.items);
@@ -11,6 +10,7 @@ function Checkout() {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // This demo changes Redux state only; form details are never sent or stored.
   function handlePlaceOrder() {
     dispatch(completeOrder());
     navigate("/");
@@ -22,6 +22,7 @@ function Checkout() {
         ← Back to Cart
       </NavLink>
       {items.length === 0 && <p>Your cart is empty</p>}
+      {/* An empty cart cannot display or submit the checkout form. */}
       {items.length > 0 && (
         <form
           className="checkout-layout"

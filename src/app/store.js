@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cartReducer from "../features/cart/cartSlice";
-import profitReducer from "../features/profit/profitSlice.js";
+import catalogueReducer from "../features/catalogue/catalogueSlice.js";
+import cartReducer from "../features/cart/cartSlice.js";
 
-// configureStore opretter Redux store, som samler appens state
+// Create the shared Redux store.
 export const store = configureStore({
-    // cartReducer styrer kurvens state
+    // Register separate reducers for cart actions and cached API data.
     reducer: {
         cart: cartReducer,
-        profit: profitReducer,
+        catalogue: catalogueReducer,
     },
 });

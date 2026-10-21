@@ -1,42 +1,12 @@
-import products from "../data/product.js";
+import { useSelector } from "react-redux";
 import ProductCard from "../components/ProductCard.jsx";
-import { useState, useEffect } from "react";
+import Footer from "../components/Footer.jsx";
 
 function Shop() {
-  const [shopProducts, setShopProducts] = useState(products);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  useEffect(() => {
-    async function fetchProducts() {
-      const response = await fetch("/api/plants");
-      if (!response.ok) {
-        throw new Error(`Failed to fetch products (HTTP ${response.status})`);
-      }
-      const data = await response.json();
-      const apiProducts = data.data;
-      setShopProducts(
-        apiProducts.map((apiProduct) => {
-          const product = products.find(
-            (product) => product.trefleId === apiProduct.id,
-          );
-
-          if (!product) {
-            throw new Error(
-              `Missing local product data for ID ${apiProduct.id}`,
-            );
-          }
-
-          return {
-            ...product,
-            name: apiProduct.scientific_name || product.name,
-          };
-        }),
-      );
-    }
-    fetchProducts()
-      .catch((error) => setError(error.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const shopProducts = useSelector((state) => state.catalogue.items);
+  const status = useSelector((state) => state.catalogue.status);
+  const error = useSelector((state) => state.catalogue.error);
+  const loading = status === "idle" || status === "loading";
 
   return (
     <div>
@@ -75,11 +45,7 @@ function Shop() {
         </div>
       </section>
 
-      <footer className="site-footer">
-        <p>
-          Data: <a href="https://trefle.io/">Trefle.io</a> (CC BY 4.0)
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

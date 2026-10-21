@@ -1,19 +1,20 @@
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { removeOne } from "../features/cart/cartSlice";
-import { addOne } from "../features/cart/cartSlice";
-import { setQuantity } from "../features/cart/cartSlice";
-import { removeItem } from "../features/cart/cartSlice";
-import TrashIcon from "./TrashIcon.jsx";
-import { clearCart } from "../features/cart/cartSlice";
+import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+import {
+  removeOne,
+  addOne,
+  setQuantity,
+  removeItem,
+  clearCart,
+} from "../features/cart/cartSlice.js";
+import TrashIcon from "./TrashIcon.jsx";
 
 function Cart() {
-  // useSelector henter kurvens produkter fra Redux state
+  // Read the shared cart items from Redux.
   const items = useSelector((state) => state.cart.items);
-  // dispatch sender actions fra komponenten til Redux
+  // Dispatch actions to update cart state.
   const dispatch = useDispatch();
-  // Beregner samlet pris for alle produkter i kurven
+  // Calculate the total from each price and quantity.
   const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
@@ -22,7 +23,7 @@ function Cart() {
   return (
     <section className="cart">
       <h2>Your items</h2>
-      {items.length === 0 && <p> Cart is empty</p>}
+      {items.length === 0 && <p>Your cart is empty.</p>}
       {items.length > 0 && (
         <div className="cart-columns" aria-hidden="true">
           <span>Product</span>
@@ -31,13 +32,13 @@ function Cart() {
           <span>Total</span>
         </div>
       )}
-      {/* Viser listen, når kurven har mindst et produkt */}
+      {/* Render product rows only when the cart contains items. */}
       {items.length > 0 && (
         <ul className="cart-list">
-          {/* map laver et listepunkt for hvert produkt i Redux*/}
+          {/* Each product uses its stable ID as the React key. */}
           {items.map((item) => (
             <li key={item.id}>
-              {/* Viser produktets billede fra Redux */}
+              {/* The image URL belongs to the product stored in the cart. */}
               <img
                 className="cart-item-image"
                 src={item.image}
@@ -48,22 +49,24 @@ function Cart() {
                 {item.price} kr
               </p>
               <h3>{item.name}</h3>
-              {/* Viser samlet pris for dette produkt ud fra antal */}
+              {/* Line total = unit price multiplied by quantity. */}
               <p className="cart-item-total">{item.price * item.quantity} kr</p>
               <div className="quantity-controls">
-                {/* Sender produktets id som payload til removeOne */}
+                {/* Decrease this product by one unit. */}
                 <button
+                type="button"
                   aria-label={`Decrease quantity of ${item.name}`}
                   className="remove-one"
                   onClick={() => dispatch(removeOne(item.id))}
                 >
                   -
                 </button>
-                {/* Lader brugeren skrive quantity direkte */}
+                {/* The reducer rejects quantities that are not positive integers. */}
                 <input
                   className="quantity-input"
                   type="number"
                   min="1"
+                  step="1"
                   aria-label={`Quantity of ${item.name}`}
                   value={item.quantity}
                   onFocus={(e) => e.target.select()}
@@ -71,13 +74,14 @@ function Cart() {
                     dispatch(
                       setQuantity({
                         id: item.id,
-                        quantity: parseInt(e.target.value, 10),
+                        quantity: Number(e.target.value),
                       }),
                     )
                   }
                 />
-                {/* Sender produktets id som payload til addOne */}
+                {/* Increase this product by one unit. */}
                 <button
+                type="button"
                   aria-label={`Increase quantity of ${item.name}`}
                   className="add-one"
                   onClick={() => dispatch(addOne(item.id))}
@@ -85,8 +89,9 @@ function Cart() {
                   +
                 </button>
               </div>
-              {/* Sender produktets id som payload til removeItem */}
+              {/* Remove the entire product row, regardless of quantity. */}
               <button
+                type="button"
                 className="remove-item"
                 aria-label={`Remove ${item.name} from cart`}
                 onClick={() => dispatch(removeItem(item.id))}
@@ -98,7 +103,7 @@ function Cart() {
           ))}
         </ul>
       )}
-      {/* Viser samlet pris under produktlisten */}
+      {/* The summary uses the same total as Checkout. */}
       {items.length > 0 && (
         <aside className="cart-summary" aria-labelledby="cart-summary-heading">
           <h2 id="cart-summary-heading">Order summary</h2>
@@ -111,7 +116,7 @@ function Cart() {
             Go to Checkout
           </NavLink>
 
-          <button className="clear-cart" onClick={() => dispatch(clearCart())}>
+          <button type="button" className="clear-cart" onClick={() => dispatch(clearCart())}>
             Clear Cart
           </button>
         </aside>

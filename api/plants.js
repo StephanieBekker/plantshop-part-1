@@ -1,4 +1,20 @@
-export async function GET() {
+const scientificNames = [
+    "Pilea peperomioides",
+    "Monstera deliciosa",
+    "Ficus microcarpa",
+    "Pachira glabra",
+    "Beaucarnea recurvata",
+    "Dracaena trifasciata",
+    "Peperomia obtusifolia",
+    "Chamaedorea elegans",
+    "Strelitzia nicolai",
+    "Scindapsus pictus",
+    "Yucca gigantea",
+    "Dracaena reflexa var. angustifolia",
+    "Aglaonema commutatum",
+];
+
+export async function GET(request) {
     const token = process.env.TREFLE_API_TOKEN;
 
     if (!token) {
@@ -8,10 +24,34 @@ export async function GET() {
         );
     }
 
-    try {
-        const response = await fetch(
-            `https://trefle.io/api/v1/species?token=${token}&filter[scientific_name]=Pilea%20peperomioides,Monstera%20deliciosa,Ficus%20microcarpa,Pachira%20glabra,Beaucarnea%20recurvata,Dracaena%20trifasciata,Peperomia%20obtusifolia,Chamaedorea%20elegans,Strelitzia%20nicolai,Scindapsus%20pictus,Yucca%20gigantea,Dracaena%20reflexa%20var.%20angustifolia,Aglaonema%20commutatum`
+    const id = new URL(request.url).searchParams.get("id");
+    const plantId = Number(id);
+
+    if (id !== null && (!Number.isInteger(plantId) || plantId < 1)) {
+        return Response.json(
+            { error: "Invalid plant ID." },
+            { status: 400 }
         );
+    }
+
+    // Without an ID, return the catalogue. With an ID, return one species.
+    const url = new URL(
+        id === null
+            ? "https://trefle.io/api/v1/species"
+            : `https://trefle.io/api/v1/species/${plantId}`,
+    );
+    url.searchParams.set("token", token);
+
+    if (id === null) {
+        url.searchParams.set("filter[scientific_name]", scientificNames.join(","));
+    }
+
+    try {
+        const response = await fetch(url);
+
+        if (response.status === 404) {
+            return Response.json({ error: "Plant not found." }, { status: 404 });
+        }
 
         if (!response.ok) {
             return Response.json(
@@ -21,7 +61,6 @@ export async function GET() {
         }
 
         const data = await response.json();
-
         return Response.json({ data: data.data });
     } catch {
         return Response.json(

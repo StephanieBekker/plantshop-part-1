@@ -2,6 +2,7 @@
   "devCommand": "vite --port $PORT",
   "rewrites": [
     { "source": "/shop", "destination": "/index.html" },
+    { "source": "/shop/:id", "destination": "/index.html" },
     { "source": "/cart", "destination": "/index.html" },
     { "source": "/checkout", "destination": "/index.html" }
   ]

@@ -1,21 +1,35 @@
-// useDispatch giver adgang til dispatch, som sender en action til Redux
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-// addToCart er en action creator: den laver beskeden til Redux
-import { addToCart } from "../features/cart/cartSlice";
+import { addToCart } from "../features/cart/cartSlice.js";
+import plantDetails from "../data/plantDetails.js";
 
-// product er en prop: produktdata, som Shop sender til dette produktkort
-export default function ProductCard({ product }) {
-  // dispatch sender en action, når brugeren klikker på knappen
+export default function ProductCard({ product, headingLevel = "h2" }) {
   const dispatch = useDispatch();
+  const Heading = headingLevel;
+
+  // Shop and related products share this description and card component.
+  const fact = plantDetails[product.trefleId]?.description;
 
   return (
     <article className="product-card">
-      <img src={product.image} alt={product.name} />
-      <h2>{product.name}</h2>
+      <Link
+        className="product-image-link"
+        to={`/shop/${product.id}`}
+        aria-label={`View ${product.name}`}
+      >
+        <img src={product.image} alt={product.name} loading="lazy" />
+      </Link>
+
+      <Heading>
+        <Link to={`/shop/${product.id}`}>{product.name}</Link>
+      </Heading>
+
+      {fact && <p className="product-fact">{fact}</p>}
       <p>{product.price} kr</p>
+
       <button
         className="add-to-cart"
-        // Sender produktet som action payload til cart-reduceren
+        type="button"
         onClick={() => dispatch(addToCart(product))}
       >
         Add to Cart
