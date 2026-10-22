@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// The cart is shared between pages and resets when the browser reloads.
+// The store restores saved items; order confirmation remains temporary.
 const initialState = {
   items: [],
   orderPlaced: false,
