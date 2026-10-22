@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { completeOrder, clearCart } from "../../features/cart/cartSlice.js";
+import { completeOrder } from "../../features/cart/cartSlice.js";
 import CheckoutFields from "./CheckoutFields.jsx";
 import OrderSummary from "./OrderSummary.jsx";
 
@@ -26,9 +26,6 @@ export default function CheckoutForm() {
       <OrderSummary items={items} total={total}>
         <p>Demo checkout. Personal details are not saved or sent. No payment is taken.</p>
         <button className="place-order" type="submit">Place Order</button>
-        <button className="clear-cart" type="button" onClick={() => dispatch(clearCart())}>
-          Clear Cart
-        </button>
       </OrderSummary>
     </form>
   );
