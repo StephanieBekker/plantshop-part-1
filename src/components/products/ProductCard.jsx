@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../features/cart/cartSlice.js";
-import plantDetails from "../data/plantDetails.js";
+import { addToCart } from "../../features/cart/cartSlice.js";
+import plantDetails from "../../data/plantDetails.js";
 
 export default function ProductCard({ product, headingLevel = "h2" }) {
   const dispatch = useDispatch();

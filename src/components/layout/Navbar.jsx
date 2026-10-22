@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import MiniCart from "./MiniCart.jsx";
-import bagIcon from "../assets/icons/shopping-bag.svg";
+import MiniCart from "../cart/MiniCart.jsx";
+import Icon from "../ui/Icon.jsx";
 
 function Navbar() {
   const items = useSelector((state) => state.cart.items);
@@ -52,7 +52,7 @@ function Navbar() {
           onClick={() => setPreviewOpen(false)}
         >
           <span className="cart-icon" aria-hidden="true">
-            <img className="bag-icon" src={bagIcon} alt="" />
+            <Icon name="shoppingBag" size={32} className="bag-icon" />
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </span>
         </NavLink>

@@ -14,10 +14,12 @@ const cartSlice = createSlice({
     addToCart: (state, action) => {
       const newItem = action.payload;
       const quantity = newItem.quantity ?? 1;
-      if (!Number.isInteger(quantity) || quantity < 1) return;
+      if (!Number.isSafeInteger(quantity) || quantity < 1) return;
 
-      state.orderPlaced = false;
       const existingItem = state.items.find((item) => item.id === newItem.id);
+      // Keep combined quantities within JavaScript's exact integer range.
+      if (existingItem && !Number.isSafeInteger(existingItem.quantity + quantity)) return;
+      state.orderPlaced = false;
 
       // Cards add one item; product details can add a chosen quantity.
       if (existingItem) {
@@ -46,14 +48,16 @@ const cartSlice = createSlice({
 
     addOne: (state, action) => {
       const existingItem = state.items.find((item) => item.id === action.payload);
-      if (existingItem) existingItem.quantity += 1;
+      if (existingItem && Number.isSafeInteger(existingItem.quantity + 1)) {
+        existingItem.quantity += 1;
+      }
     },
 
     setQuantity: (state, action) => {
       const { id, quantity } = action.payload;
       const existingItem = state.items.find((item) => item.id === id);
-      // Validate here as well as in the input so state keeps whole quantities.
-      if (existingItem && Number.isInteger(quantity) && quantity >= 1) {
+      // Validate here too so every stored quantity remains an exact whole number.
+      if (existingItem && Number.isSafeInteger(quantity) && quantity >= 1) {
         existingItem.quantity = quantity;
       }
     },

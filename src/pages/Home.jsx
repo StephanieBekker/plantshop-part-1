@@ -1,7 +1,7 @@
+import ProductGridSkeleton from "../components/products/ProductGridSkeleton.jsx";
 import { useSelector } from "react-redux";
-import Footer from "../components/Footer.jsx";
 import { Link } from "react-router-dom";
-import ProductCard from "../components/ProductCard.jsx";
+import ProductCard from "../components/products/ProductCard.jsx";
 import products from "../data/product.js";
 
 // Reuse catalogue products so Home and Shop share images, prices and cart actions.
@@ -45,15 +45,14 @@ function Home() {
           <h2 id="featured-heading">Find your next green favourite</h2>
           <Link to="/shop">View all plants</Link>
         </div>
-        {loading && <p role="status">Loading plants...</p>}
+        {loading && <ProductGridSkeleton count={3} />}
         {error && <p role="alert">{error}</p>}
-        <div className="product-grid" aria-busy={loading}>
-          {!loading && featuredProducts.map((product) => (
+        {!loading && <div className="product-grid">
+          {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} headingLevel="h3" />
           ))}
-        </div>
+        </div>}
       </section>
-      <Footer />
     </div>
   );
 }
